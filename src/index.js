@@ -11,6 +11,7 @@ const passport = require('passport');
 import { Server as WebSocketServer } from "socket.io";
 const http = require('http')
 import Sockets from "./routes/sockets"
+const device = require('express-device')
 
 //inicializaciones
 const app = express();
@@ -45,6 +46,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 365,
     store: new MySQLStore(database)
 }));
+app.use(device.capture());
 app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
@@ -58,6 +60,9 @@ app.use((req, res, next) => {
     app.locals.warning = req.flash('warning');
     app.locals.danger = req.flash('danger');
     app.locals.user = req.user;
+    let dev = req.device.type;
+    if(dev == 'desktop'){dev = 'Escritorio'}else{dev = 'Disp.Movil'}
+    app.locals.device = dev;
     next();
 });
 
