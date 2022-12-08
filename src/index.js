@@ -59,9 +59,7 @@ app.use((req, res, next) => {
     app.locals.warning = req.flash('warning');
     app.locals.danger = req.flash('danger');
     app.locals.user = req.user;
-    let dev = req.device.type;
-    if(dev == 'desktop'){dev = 'Escritorio'}else{dev = 'Disp.Movil'}
-    app.locals.device = dev;
+    req.device.type == 'desktop' ? app.locals.desk = true : app.locals.desk = false;
     next();
 });
 

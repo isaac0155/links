@@ -5,18 +5,25 @@ var ret = (io)=>
     
     const pool = require('../database');
     const { isLoggedIn } = require('../lib/auth')
-    
+    /* Sockets */
+
+    const actualizarComunidad = async(id) =>{
+        let links = await pool.query('SELECT a.*, b.fullname  FROM links a, users b WHERE a.publico = 1 and a.user_id = b.id and a.user');
+        io.sockets.emit("nuevoComunidad", links);
+    }
+
+    /* Rutas del servidor */
     router.get('/add', isLoggedIn,(req, res)=>{
         res.render('links/add');
     });
     
-    router.post('/add', isLoggedIn,async (req, res)=>{
+    router.post('/add', isLoggedIn,async (req, res, next)=>{
         const { title, url, description } = req.body;
         const user_id = req.user.id
         let publico = false;
         if(req.body.publico == "on"){
             publico = true;
-            io.sockets.emit("nuevoComunidad",{ title, url, description })
+            io.sockets.emit("nuevoComunidad", title, url, description );
         }
         const newLink = {
             title, 
@@ -28,6 +35,7 @@ var ret = (io)=>
         await pool.query('INSERT INTO links set ?', [newLink]);
         req.flash('success', 'Guardado correctamente.');
         res.redirect('/links/add');
+        //publico == true ? actualizarComunidad(newLink.id): next;
     });
     
     router.get('/', isLoggedIn, async(req,res)=>{
@@ -69,7 +77,7 @@ var ret = (io)=>
     });
     
     router.get('/community', isLoggedIn, async (req, res) => {
-        const links = await pool.query('SELECT a.*, b.fullname  FROM links a, users b WHERE a.publico = 1 and a.user_id = b.id');
+        const links = await pool.query('SELECT a.*, b.fullname FROM links a, users b WHERE a.publico = 1 and a.user_id = b.id ORDER BY a.created_at DESC');
         res.render('links/community/publico', { links })
     });
     
