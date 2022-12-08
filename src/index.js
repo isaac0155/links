@@ -10,7 +10,6 @@ const {database} = require('./keys');
 const passport = require('passport');
 import { Server as WebSocketServer } from "socket.io";
 const http = require('http')
-import Sockets from "./routes/sockets"
 const device = require('express-device')
 
 //inicializaciones
@@ -71,12 +70,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //rutas
 app.use(require('./routes/autentication'));
-app.use('/links', require('./routes/links'));
+app.use('/links', require('./routes/links')(io));
 app.use(require('./routes/index'));
 
 //iniciar servidor
 Server.listen(app.get('port'), () =>{
     console.log('Servidor en el puerto', app.get('port'));
 });
-
-Sockets(io);
