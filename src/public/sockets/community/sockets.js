@@ -1,19 +1,19 @@
 const socketc = io.connect();
 const linksList = document.querySelector("#links");
 
-const linksUI = (title, url, description) => {
+const linksUI = (link) => {
   const div = document.createElement("div");
   div.className='col-md-3 mb-3 mt-3';
   div.innerHTML = `
         <div class="card text-center">
         <div class="card-body">
-            <a href="${url}" target="_blank">
+            <a href="${link.url}" target="_blank">
                 <h3 class="card-title text-uppercase">
-                    ${title}
+                    ${link.title}
                 </h3>
             </a>
             <p class="m-s text-dark">
-                ${description}
+                ${link.description}
             </p>
         </div>
     </div>
@@ -23,9 +23,9 @@ const linksUI = (title, url, description) => {
 
 
 
-socketc.on("nuevoComunidad",(title, url, description)=>
+socketc.on("nuevoComunidad",(link)=>
 {
-    linksList.append(linksUI(title, url, description));
+    linksList.append(linksUI(link));
 })
 
 

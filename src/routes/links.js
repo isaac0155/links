@@ -23,19 +23,14 @@ var ret = (io)=>
         let publico = false;
         if(req.body.publico == "on"){
             publico = true;
-            io.sockets.emit("nuevoComunidad", title, url, description );
         }
-        const newLink = {
-            title, 
-            description,
-            user_id,
-            url, 
-            publico
-        };
-        await pool.query('INSERT INTO links set ?', [newLink]);
+        await pool.query('select newLink(?,?,?,?,?);', [title, description, url, user_id, publico]);
+        //let idNewLink = await pool.query('select newLink(?,?,?,?,?);', [title, description, url, user_id, publico]);
+        //idNewLink = JSON.parse(JSON.stringify(idNewLink));
+        //console.log(idNewLink);
         req.flash('success', 'Guardado correctamente.');
         res.redirect('/links/add');
-        //publico == true ? actualizarComunidad(newLink.id): next;
+        //publico == true ? actualizarComunidad(idNewLink): next;
     });
     
     router.get('/', isLoggedIn, async(req,res)=>{
