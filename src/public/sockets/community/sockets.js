@@ -1,4 +1,3 @@
-const socketc = io.connect();
 const linksList = document.querySelector("#links");
 
 const linksUI = (link) => {
@@ -15,6 +14,7 @@ const linksUI = (link) => {
             <p class="m-s text-dark">
                 ${link.description}
             </p>
+            <p class="form-control text-muted">Creado por ${link.fullname}, ${data(link.created_at)}</p>
         </div>
     </div>
 `;
@@ -23,14 +23,15 @@ const linksUI = (link) => {
 
 
 
-socketc.on("nuevoComunidad",(link)=>
+socket.on("nuevoComunidad",(link)=>
 {
+    linksList.innerHTML = "";
     linksList.append(linksUI(link));
 })
 
 
 /* formato de tiempo */
-function parseTwitterDate(tdate) {
+function data(tdate) {
     var system_date = new Date(Date.parse(tdate));
     var user_date = new Date();
     var tim = system_date;
@@ -48,8 +49,7 @@ function parseTwitterDate(tdate) {
     if (diff <= 86400) {return "hace " + Math.round(diff / 3600) + " horas";}
     if (diff <= 129600) {return "hace 1 día";}
     if (diff <= 172800) {return "hace " + Math.round(diff / 86400) + " días";}
-    if (diff <= 520000) {return "hace 1 semana";}
-    if (diff < 1209600) {return formatDate(tim);}
+    if (diff < 520000) {return formatDate(tim);}
 
     return "on " + system_date;
 }

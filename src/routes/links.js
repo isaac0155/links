@@ -8,8 +8,8 @@ var ret = (io)=>
     /* Sockets */
 
     const actualizarComunidad = async(id) =>{
-        let links = await pool.query('SELECT a.*, b.fullname  FROM links a, users b WHERE a.publico = 1 and a.user_id = b.id and a.user');
-        io.sockets.emit("nuevoComunidad", links);
+        let links = await pool.query('SELECT a.*, b.fullname  FROM links a, users b WHERE a.publico = 1 and a.user_id = b.id and a.id = ?', id);
+        io.sockets.emit("nuevoComunidad", links[0]);
     }
 
     /* Rutas del servidor */
@@ -19,20 +19,21 @@ var ret = (io)=>
     
     router.post('/add', isLoggedIn,async (req, res, next)=>{
         const { title, url, description } = req.body;
-        const user_id = req.user.id
-        let publico = false;
-        if(req.body.publico == "on"){
-            publico = true;
-        }
-        await pool.query('select newLink(?,?,?,?,?);', [title, description, url, user_id, publico]);
-        //let idNewLink = await pool.query('select newLink(?,?,?,?,?);', [title, description, url, user_id, publico]);
-        //idNewLink = JSON.parse(JSON.stringify(idNewLink));
-        //console.log(idNewLink);
-        req.flash('success', 'Guardado correctamente.');
+        const user_id = req.user.id;
+        let publico = () =>{
+            return req.body.publico == "on" ? true :  false;
+        } 
+        let idNewLink = await pool.query('select newLink(?,?,?,?,?);', [title, description, url, user_id, publico()]);
+        idNewLink = obtenerValor(idNewLink);
+        req.flash('success', title+' guardado correctamente.');
         res.redirect('/links/add');
-        //publico == true ? actualizarComunidad(idNewLink): next;
+        idNewLink != 'False' ? actualizarComunidad(idNewLink) : next;
     });
-    
+    function obtenerValor(objeto) 
+    {
+        objeto = JSON.parse(JSON.stringify(objeto[0]))
+        return objeto[Object.getOwnPropertyNames(objeto)[0]]
+    }
     router.get('/', isLoggedIn, async(req,res)=>{
         const id = req.user.id;
         const links = await pool.query('SELECT * FROM links WHERE user_id = ?', [id] );
