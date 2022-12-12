@@ -1,5 +1,12 @@
 var ret = (io)=>
 {
+    io.on("connection", (socket) => {
+        socket.on('cliente:verifUser', async(user)=>{
+            console.log('usaer:', user);
+            let existe = await pool.query('select COUNT(a.username) as user from users a where a.username = ?', user)
+            console.log('as',existe[0].user);
+        });
+    });
     const express = require('express');
     const router = express.Router();
     

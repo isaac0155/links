@@ -7,6 +7,6 @@ router.get('/', (req, res) =>{
 });
 router.get('*', (req, res) => {
     res.render('vacio')
-})
+});
 
 module.exports = router;

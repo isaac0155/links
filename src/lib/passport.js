@@ -47,6 +47,6 @@ passport.serializeUser((user, done)=>{
 });
 
 passport.deserializeUser(async(id, done)=>{
-    const row = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+    const row = await pool.query('select a.*, COUNT(b.publico) as links from users a, links b where a.id = ? and a.id = b.user_id', [id]);
     done(null, row[0]);
 });
