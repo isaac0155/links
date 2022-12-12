@@ -36,7 +36,7 @@ var ret = (io)=>
     }
     router.get('/', isLoggedIn, async(req,res)=>{
         const id = req.user.id;
-        const links = await pool.query('SELECT * FROM links WHERE user_id = ?', [id] );
+        const links = await pool.query('SELECT * FROM links WHERE user_id = ? ORDER BY created_at DESC', [id] );
         
         res.render('links/list', { links })
     });
