@@ -17,10 +17,10 @@ passport.use('local.signin', new LocalStrategy({
         if(validPassword){            
             done(null, user, req.flash('success', "bienvenido" + user.username)) ;            
         }else{
-            done(null, false, req.flash('danger','Contraseña incorrecta'));
+            done(null, false, req.flash('danger','Datos Incorrectos'));
         }
     }else{
-        return done(null, false, req.flash('danger','El usuario no existe'))
+        return done(null, false, req.flash('danger','Datos Incorrectos'))
     }
 }));
 
