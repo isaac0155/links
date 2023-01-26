@@ -11,6 +11,7 @@ const passport = require('passport');
 import { Server as WebSocketServer } from "socket.io";
 const http = require('http')
 const device = require('express-device')
+import {PORT} from './config.js'
 
 //inicializaciones
 const app = express();
@@ -18,7 +19,7 @@ const Server = http.createServer(app)
 const io = new WebSocketServer(Server);
 require('./lib/passport');
 
-app.set('port', process.env.PORT || 3000);
+//app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', engine({
     defaultLayout: 'main',
@@ -72,6 +73,6 @@ app.use('/links', require('./routes/links')(io));
 app.use(require('./routes/index'));
 
 //iniciar servidor
-Server.listen(app.get('port'), () =>{
-    console.log('Servidor en el puerto', app.get('port'));
+Server.listen(PORT, () =>{
+    console.log('Servidor en el puerto', PORT);
 });
